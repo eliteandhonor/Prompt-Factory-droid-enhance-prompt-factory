@@ -1,0 +1,14 @@
+[
+  {
+    "schemaVersion": "1.0",
+    "id": "test-prompt-1",
+    "title": "Summarize the following text",
+    "description": "Provide a short summary of any input text, no more than 200 words.",
+    "prompt": "Summarize this: {{input_text}}",
+    "tags": ["summary", "nlp"],
+    "user_id": "localuser",
+    "author": "audit-debug",
+    "created_at": "2025-05-03T10:00:00Z",
+    "updated_at": "2025-05-03T10:00:00Z"
+  }
+]

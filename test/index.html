@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Prompt App Unit & Integration Tests</title>
+  <link rel="stylesheet" href="https://unpkg.com/qunit@2.20.1/qunit/qunit.css">
+  <script>window.QUnit && (QUnit.config.autostart = false);</script>
+</head>
+<body>
+  <h1>Automated Unit & Integration Tests — QUnit</h1>
+  <div id="qunit"></div>
+  <div id="qunit-fixture"></div>
+  <script src="https://unpkg.com/qunit@2.20.1/qunit/qunit.js"></script>
+  <script type="module" src="./test_helpers.js"></script>
+  <script type="module" src="./test_markdown.js"></script>
+  <script type="module" src="./test_store.js"></script>
+  <script type="module" src="./test_session.js"></script>
+  <script type="module" src="./test_api_db.js"></script>
+  <script type="module" src="./test_api_prompts.js"></script>
+  <script>window.QUnit && QUnit.start();</script>
+<script type="module" src="../js/main.js"></script>
+</body>
+</html>

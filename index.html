@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Avares Staff Prompts</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <!-- Removed redundant inline styles; all styles are now in main.css -->
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <!-- Accessible Navigation Bar -->
+  <nav id="main-nav" role="navigation" aria-label="Main Navigation">
+    <div class="nav-section">
+      <button id="nav-prompts-btn" type="button" class="nav-btn" aria-label="Go to Home" tabindex="0" data-testid="nav-prompts-btn">Home</button>
+    </div>
+    <div class="nav-section nav-center">
+      <h1 class="m-0 animated-title" id="app-title">Avares Staff Prompts</h1>
+    </div>
+    <div class="nav-section">
+      <input id="search-input" type="text" placeholder="Search prompts..." aria-label="Search prompts" class="w-100 maxw-400 mb-0 p-05em" tabindex="0" data-testid="prompt-search-input">
+    </div>
+  </nav>
+  <!-- Sticky Toolbar for Prompt Controls -->
+  <div id="prompt-toolbar">
+    <div id="filter-summary" class="fw-bold" aria-live="polite"></div>
+    <label for="filter-category" class="m-0">Category:
+      <select id="filter-category" class="mr-1em" aria-label="Filter by Category" tabindex="0" data-testid="filter-category-select">
+        <option value="">All</option>
+      </select>
+    </label>
+    <button id="manage-categories-btn" type="button" class="utility mr-1em" aria-label="Manage Categories" tabindex="0" data-testid="manage-categories-btn">Manage Categories</button>
+    <label for="filter-tag" class="m-0">Tag:
+      <select id="filter-tag" aria-label="Filter by Tag" tabindex="0" data-testid="filter-tag-select">
+        <option value="">All</option>
+      </select>
+    </label>
+    <button id="manage-tags-btn" type="button" class="utility" aria-label="Manage Tags" tabindex="0" data-testid="manage-tags-btn">Manage Tags</button>
+    <button id="clear-filters-btn" type="button" class="utility ml-1em" aria-label="Clear Filters" tabindex="0" data-testid="clear-filters-btn">Clear Filters</button>
+    <div id="prompt-list-actions" class="d-flex jc-center gap-12 mt-16px">
+      <button id="add-prompt-btn" data-testid="add-prompt-btn" type="button" class="success" aria-label="Add Prompt" tabindex="0">＋ <span class="visually-hidden">Add Prompt</span></button>
+      <button id="batch-import-btn" data-testid="batch-import-btn" type="button" aria-label="Batch Import Prompts" tabindex="0">⇆ <span class="visually-hidden">Batch Import</span></button>
+      <button id="load-more-btn" type="button" class="utility d-none" aria-label="Load More Prompts" tabindex="0" data-testid="load-more-btn">Load More</button>
+    </div>
+  </div>
+  <main id="main-content" role="main" tabindex="-1">
+    <section id="prompt-list-section" class="d-none">
+      <div id="prompt-list"></div>
+    </section>
+  </main>
+  <!-- Prompt Detail Modal (dynamic, managed by modals.js) -->
+  <div
+    id="prompt-detail-modal"
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="prompt-detail-title"
+    tabindex="-1"
+    hidden
+  >
+    <div class="modal-content" id="prompt-detail-body"></div>
+  </div>
+  <!-- CRUD Modal (dynamic, managed by modals.js) -->
+  <div
+    id="crud-modal"
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="crud-modal-title"
+    tabindex="-1"
+    hidden
+  >
+    <div class="modal-content" id="crud-modal-body"></div>
+  </div>
+  <!-- Batch Import Modal (dynamic, managed by modals.js) -->
+  <!-- Multi-File Import Modal (minimal, accessible, managed by modals.js) -->
+  <div
+    id="multi-import-modal"
+    class="modal d-none"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="multi-import-modal-title"
+    tabindex="-1"
+    hidden
+  >
+    <div class="modal-content modal-narrow" id="multi-import-modal-body">
+      <button id="close-multi-import-modal-btn" class="close-modal secondary" aria-label="Close Import Modal" tabindex="0" data-testid="close-multi-import-modal-btn">&times;</button>
+      <h2 id="multi-import-modal-title" tabindex="0">Import Prompts</h2>
+      <p>
+        Import one or more <b>.txt</b>, <b>.md</b>, or <b>.json</b> files.<br>
+        Each .txt/.md file becomes a prompt (title = filename, content = file).<br>
+        <a href="data/prompts-template.json" download tabindex="0" id="download-import-template-link">Download sample template</a>
+      </p>
+      <div id="multi-import-drop-area" tabindex="0" aria-label="Drop files here or use the file picker" class="import-drop-area">
+        <span>Drag and drop files here, or</span>
+        <input type="file" id="multi-import-file-input" accept=".json,.txt,.md,application/json,text/plain,text/markdown" multiple aria-describedby="multi-import-file-desc" tabindex="0" />
+        <div id="multi-import-file-desc" class="sr-only">Select one or more .json, .txt, or .md files. Each .txt/.md file will become a prompt.</div>
+      </div>
+      <div id="multi-import-file-list" class="import-file-list" aria-live="polite"></div>
+      <div id="multi-import-summary" class="import-summary" aria-live="polite"></div>
+      <div id="multi-import-messages" class="import-messages" aria-live="assertive"></div>
+      <div style="display:flex;gap:1em;justify-content:flex-end;margin-top:1em;">
+        <button type="button" id="multi-import-submit" class="success" aria-label="Import selected files" tabindex="0">Import</button>
+        <button type="button" id="multi-import-cancel" class="secondary" aria-label="Cancel import" tabindex="0">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <!-- Result View Modal -->
+  <div
+    id="result-modal"
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="result-modal-title"
+    tabindex="-1"
+    hidden
+   >
+    <div class="modal-content modal-wide">
+      <button id="close-result-modal-btn" class="close-modal secondary" aria-label="Close Result Modal" tabindex="0" data-testid="close-result-modal-btn">&times;</button>
+      <h2 id="result-modal-title">Result</h2>
+      <div id="result-modal-content" class="modal-scroll-content"></div>
+    </div>
+  </div>
+    <!-- Tag Management Modal -->
+    <div
+      id="tag-management-modal"
+      class="modal d-none"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="tag-management-title"
+      tabindex="-1"
+    >
+      <div class="modal-content modal-narrow">
+        <button id="close-tag-management-modal" class="close-modal secondary" aria-label="Close Tag Management Modal" tabindex="0" data-testid="close-tag-management-modal-btn">&times;</button>
+        <h2 id="tag-management-title">Manage Tags</h2>
+        <div id="tag-management-content"></div>
+      </div>
+    </div>
+    <!-- Category Management Modal -->
+    <div
+      id="category-management-modal"
+      class="modal d-none"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="category-management-title"
+      tabindex="-1"
+    >
+      <div class="modal-content modal-narrow">
+        <button id="close-category-management-modal" class="close-modal secondary" aria-label="Close Category Management Modal" tabindex="0" data-testid="close-category-management-modal-btn">&times;</button>
+        <h2 id="category-management-title">Manage Categories</h2>
+        <div id="category-management-content"></div>
+      </div>
+    </div>
+  <script type="module" src="js/main.js"></script>
+  <!-- Toast notification element for feedback (used by ui/toast.js) -->
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+  </body>
+  </html>
+<!-- DEBUG: Add a high-contrast always-on-top clickable div to test pointer events -->
+<!-- DEBUG BUTTON REMOVED FOR PRODUCTION -->
+<!-- End DEBUG -->
